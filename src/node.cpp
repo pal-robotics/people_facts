@@ -44,15 +44,38 @@ class PeopleFacts {
         // bind the callback to this class' 'onPerson' method.
         hri_listener.onPerson(
             bind(&PeopleFacts::onPerson, this, std::placeholders::_1));
+        hri_listener.onTrackedPerson(
+            bind(&PeopleFacts::onTrackedPerson, this, std::placeholders::_1));
+        hri_listener.onTrackedPersonLost(bind(&PeopleFacts::onTrackedPersonLost,
+                                              this, std::placeholders::_1));
     }
 
-    void onPerson(PersonConstPtr person) {
-        ROS_INFO_STREAM("Person detected! ID: " << person->id());
+    void onPerson(PersonWeakConstPtr person_weak) {
+        if (auto person = person_weak.lock()) {
+            ROS_INFO_STREAM("New person detected. ID: " << person->id());
 
+            knowledge_core::Revise revise;
+            revise.request.method = knowledge_core::ReviseRequest::UPDATE;
+            revise.request.statements = {person->id() + " rdf:type Human"};
+
+            kb_revise.call(revise);
+        }
+    }
+
+    void onTrackedPerson(PersonWeakConstPtr person_weak) {
+        if (auto person = person_weak.lock()) {
+            knowledge_core::Revise revise;
+            revise.request.method = knowledge_core::ReviseRequest::UPDATE;
+            revise.request.statements = {person->id() +
+                                         " currentlyTracked true"};
+
+            kb_revise.call(revise);
+        }
+    }
+    void onTrackedPersonLost(ID id) {
         knowledge_core::Revise revise;
-        revise.request.method = knowledge_core::ReviseRequest::UPDATE;
-        revise.request.statements = {person->id() + " rdf:type Human",
-                                     person->id() + " currentlyTracked true"};
+        revise.request.method = knowledge_core::ReviseRequest::RETRACT;
+        revise.request.statements = {id + " currentlyTracked false"};
 
         kb_revise.call(revise);
     }
