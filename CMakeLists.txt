@@ -31,9 +31,27 @@ target_link_libraries(${PROJECT_NAME}_node
    ${catkin_LIBRARIES}
 )
 
-#############
-## Install ##
-#############
+
+###########################################################
+# Tests
+
+if(CATKIN_ENABLE_TESTING)
+
+include_directories(
+    test
+)
+
+find_package(rostest REQUIRED)
+
+add_rostest_gmock(test_people_facts test/test_people_facts.test test/test_people_facts.cpp)
+target_include_directories(test_people_facts PRIVATE ${rostest_INCLUDE_DIRS})
+target_link_libraries(test_people_facts ${catkin_LIBRARIES})
+
+endif() # CATKIN_ENABLE_TESTING
+
+
+###########################################################
+# Install
 
 install(TARGETS ${PROJECT_NAME}_node
    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
