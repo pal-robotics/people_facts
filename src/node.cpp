@@ -50,6 +50,65 @@ class PeopleFacts {
                                               this, std::placeholders::_1));
     }
 
+    void update() {
+        vector<string> stmts_to_add;
+        vector<string> stmts_to_remove;
+
+        for (auto person : hri_listener.getTrackedPersons()) {
+            auto p = person.second.lock();
+
+            auto id = p->id();
+
+            EngagementLevel engagement = hri::UNKNOWN;
+            if (p->engagement_status()) {
+                engagement = *(p->engagement_status());
+            }
+            string predicate(" hasEngagementLevel ");
+            if (needsUpdate(id, predicate,
+                            hash<EngagementLevel>{}(engagement))) {
+                ROS_INFO_STREAM("Revising value of predicate <"
+                                << predicate << "> for " << id);
+                switch (engagement) {
+                    case hri::UNKNOWN:
+                        stmts_to_remove.push_back(id + predicate + "engaged");
+                        stmts_to_remove.push_back(id + predicate +
+                                                  "disengaged");
+                        stmts_to_remove.push_back(id + predicate + "engaging");
+                        stmts_to_remove.push_back(id + predicate +
+                                                  "disengaging");
+                        break;
+                    case hri::ENGAGED:
+                        stmts_to_add.push_back(id + predicate + "engaged");
+                        break;
+                    case hri::ENGAGING:
+                        stmts_to_add.push_back(id + predicate + "engaging");
+                        break;
+                    case hri::DISENGAGING:
+                        stmts_to_add.push_back(id + predicate + "disengaging");
+                        break;
+                    case hri::DISENGAGED:
+                        stmts_to_add.push_back(id + predicate + "disengaged");
+                        break;
+                }
+            }
+        }
+
+        if (!stmts_to_add.empty()) {
+            knowledge_core::Revise revise;
+            revise.request.method = knowledge_core::ReviseRequest::UPDATE;
+            revise.request.statements = stmts_to_add;
+
+            kb_revise.call(revise);
+        }
+        if (!stmts_to_remove.empty()) {
+            knowledge_core::Revise revise;
+            revise.request.method = knowledge_core::ReviseRequest::RETRACT;
+            revise.request.statements = stmts_to_remove;
+
+            kb_revise.call(revise);
+        }
+    }
+
     void onPerson(PersonWeakConstPtr person_weak) {
         if (auto person = person_weak.lock()) {
             ROS_INFO_STREAM("New person detected. ID: " << person->id());
@@ -81,8 +140,37 @@ class PeopleFacts {
     }
 
    private:
+    /** returns true if a specific 'key' has changed and, accordingly, the
+     * knowledge base needs update.
+     *
+     * Attention: *not* idempotent. Calling `needsUpdate` also updates the
+     * internal keystore with the new hash value.
+     */
+    bool needsUpdate(ID id, string key, size_t hash_value) {
+        ROS_DEBUG_STREAM("Checking value of " << key << " for " << id
+                                              << " (hash:" << hash_value
+                                              << ")");
+        if (_previous_state.count(id) == 0) {
+            _previous_state[id][key] = hash_value;
+            return true;
+        }
+        if (_previous_state[id].count(key) == 0) {
+            _previous_state[id][key] = hash_value;
+            return true;
+        }
+
+        if (_previous_state[id][key] != hash_value) {
+            _previous_state[id][key] = hash_value;
+            return true;
+        }
+
+        return false;
+    }
+
     ServiceClient kb_revise;
     HRIListener hri_listener;
+
+    map<ID, map<string, size_t>> _previous_state;
 };
 
 int main(int argc, char** argv) {
@@ -90,13 +178,15 @@ int main(int argc, char** argv) {
 
     ros::NodeHandle nh;
 
-    auto pf = PeopleFacts(nh);
+    PeopleFacts pf(nh);
 
     ros::Rate loop_rate(10);
 
     while (ros::ok()) {
         loop_rate.sleep();
         ros::spinOnce();
+
+        pf.update();
     }
 
     cout << "Bye bye!" << endl;
