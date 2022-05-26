@@ -2,6 +2,11 @@
 Changelog for package people_facts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* remove the hri::UNKNOWN constant that has been removed from libhri
+* Contributors: Séverin Lemaignan
+
 0.2.0 (2022-05-26)
 ------------------
 * expose the engagement status to the knowledge base
