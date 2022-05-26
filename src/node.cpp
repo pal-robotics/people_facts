@@ -59,36 +59,40 @@ class PeopleFacts {
 
             auto id = p->id();
 
-            EngagementLevel engagement = hri::UNKNOWN;
-            if (p->engagement_status()) {
-                engagement = *(p->engagement_status());
-            }
             string predicate(" hasEngagementLevel ");
-            if (needsUpdate(id, predicate,
-                            hash<EngagementLevel>{}(engagement))) {
-                ROS_INFO_STREAM("Revising value of predicate <"
-                                << predicate << "> for " << id);
-                switch (engagement) {
-                    case hri::UNKNOWN:
-                        stmts_to_remove.push_back(id + predicate + "engaged");
-                        stmts_to_remove.push_back(id + predicate +
-                                                  "disengaged");
-                        stmts_to_remove.push_back(id + predicate + "engaging");
-                        stmts_to_remove.push_back(id + predicate +
-                                                  "disengaging");
-                        break;
-                    case hri::ENGAGED:
-                        stmts_to_add.push_back(id + predicate + "engaged");
-                        break;
-                    case hri::ENGAGING:
-                        stmts_to_add.push_back(id + predicate + "engaging");
-                        break;
-                    case hri::DISENGAGING:
-                        stmts_to_add.push_back(id + predicate + "disengaging");
-                        break;
-                    case hri::DISENGAGED:
-                        stmts_to_add.push_back(id + predicate + "disengaged");
-                        break;
+            if (p->engagement_status()) {
+                auto engagement = *(p->engagement_status());
+
+                if (needsUpdate(id, predicate,
+                                hash<EngagementLevel>{}(engagement))) {
+                    ROS_INFO_STREAM("Revising value of predicate <"
+                                    << predicate << "> for " << id);
+                    switch (engagement) {
+                        case hri::ENGAGED:
+                            stmts_to_add.push_back(id + predicate + "engaged");
+                            break;
+                        case hri::ENGAGING:
+                            stmts_to_add.push_back(id + predicate + "engaging");
+                            break;
+                        case hri::DISENGAGING:
+                            stmts_to_add.push_back(id + predicate +
+                                                   "disengaging");
+                            break;
+                        case hri::DISENGAGED:
+                            stmts_to_add.push_back(id + predicate +
+                                                   "disengaged");
+                            break;
+                    }
+                }
+
+            } else {
+                if (needsUpdate(id, predicate, 0)) {
+                    ROS_INFO_STREAM("Revising value of predicate <"
+                                    << predicate << "> for " << id);
+                    stmts_to_remove.push_back(id + predicate + "engaged");
+                    stmts_to_remove.push_back(id + predicate + "disengaged");
+                    stmts_to_remove.push_back(id + predicate + "engaging");
+                    stmts_to_remove.push_back(id + predicate + "disengaging");
                 }
             }
         }
