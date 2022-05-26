@@ -2,8 +2,8 @@
 Changelog for package people_facts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.0 (2022-05-26)
+------------------
 * expose the engagement status to the knowledge base
 * update currentlyTracked predicate based persons' status
 * WIP on unit-tests. Currently test segfault - to be debugged
