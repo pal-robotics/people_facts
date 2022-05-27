@@ -2,6 +2,11 @@
 Changelog for package people_facts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add LICENSE
+* Contributors: Séverin Lemaignan
+
 0.2.1 (2022-05-26)
 ------------------
 * remove the hri::UNKNOWN constant that has been removed from libhri
