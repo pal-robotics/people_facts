@@ -2,8 +2,8 @@
 Changelog for package people_facts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.2 (2022-05-27)
+------------------
 * add LICENSE
 * Contributors: Séverin Lemaignan
 
