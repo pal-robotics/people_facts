@@ -2,8 +2,8 @@
 Changelog for package people_facts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.3 (2023-01-26)
+------------------
 * rename binary to 'start' instead of 'node'
 * Contributors: Séverin Lemaignan
 
