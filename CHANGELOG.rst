@@ -2,8 +2,8 @@
 Changelog for package people_facts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.0 (2024-03-05)
+------------------
 * port to ROS 2
 * Contributors: Séverin Lemaignan
 
