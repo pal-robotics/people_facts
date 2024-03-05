@@ -1,93 +1,60 @@
-# Copyright (c) 2022 PAL Robotics S.L. All rights reserved.
+# Copyright (c) 2024 PAL Robotics S.L. All rights reserved.
 #
-#  Redistribution and use in source and binary forms, with or without
-#  modification, are permitted provided that the following conditions are met:
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-#  1. Redistributions of source code must retain the above copyright notice,
-#  this list of conditions and the following disclaimer.
-#  2. Redistributions in binary form must reproduce the above copyright notice,
-#  this list of conditions and the following disclaimer in the documentation
-#  and/or other materials provided with the distribution.
-#  3. Neither the name of the copyright holder nor the names of its
-#  contributors may be used to endorse or promote products derived from this
-#  software without specific prior written permission.
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
-#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
-#  IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
-#  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-#  PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-#  HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-#  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-#  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-#  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-#  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-#  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.8)
 project(people_facts)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+# Global flags
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif()
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  hri
-  knowledge_core
-  roscpp
+# Dependencies
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
+
+# Targets
+ament_auto_add_library(${PROJECT_NAME}_lib
+  src/people_facts/node_people_facts.cpp
 )
 
-catkin_package(
+ament_auto_add_executable(${PROJECT_NAME}
+  src/main.cpp
 )
 
-include_directories(
-    SYSTEM ${catkin_INCLUDE_DIRS}
+install(
+  DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
 )
 
-
-add_executable(${PROJECT_NAME}_node src/node.cpp)
-
-set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME start PREFIX "")
-
-add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-target_link_libraries(${PROJECT_NAME}_node
-   ${catkin_LIBRARIES}
-)
+if(pal_module_cmake_FOUND)
+    pal_register_modules(module/people_facts.yaml)
+endif()
 
 
-###########################################################
-# Tests
+# Testing
+if(BUILD_TESTING)
+  ament_auto_find_test_dependencies()
+  ament_lint_auto_find_test_dependencies()
 
-if(CATKIN_ENABLE_TESTING)
+  ament_add_gmock(${PROJECT_NAME}_test test/test_node_people_facts.cpp)
+  target_include_directories(${PROJECT_NAME}_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME}_lib)
+endif()
 
-include_directories(
-    test
-)
-
-find_package(rostest REQUIRED)
-
-add_rostest_gmock(test_people_facts test/test_people_facts.test test/test_people_facts.cpp)
-target_include_directories(test_people_facts PRIVATE ${rostest_INCLUDE_DIRS})
-target_link_libraries(test_people_facts ${catkin_LIBRARIES})
-
-endif() # CATKIN_ENABLE_TESTING
-
-
-###########################################################
-# Install
-
-install(TARGETS ${PROJECT_NAME}_node
-   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
-## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
-
-
+ament_auto_package()
