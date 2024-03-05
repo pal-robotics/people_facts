@@ -2,6 +2,11 @@
 Changelog for package people_facts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* port to ROS 2
+* Contributors: Séverin Lemaignan
+
 0.2.3 (2023-01-26)
 ------------------
 * rename binary to 'start' instead of 'node'
