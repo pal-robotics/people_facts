@@ -62,7 +62,7 @@ NodePeopleFacts::on_cleanup(const rclcpp_lifecycle::State &)
 LifecycleCallbackReturn
 NodePeopleFacts::on_activate(const rclcpp_lifecycle::State &)
 {
-  kb_revise_ = this->create_client<kb_msgs::srv::Revise>("kb/revise");
+  kb_revise_ = this->create_client<kb_msgs::srv::Revise>("/kb/revise");
 
   while (!kb_revise_->wait_for_service(1s)) {
     if (!rclcpp::ok()) {

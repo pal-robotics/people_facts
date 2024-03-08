@@ -103,7 +103,7 @@ protected:
     //////////////////////////////////////////////////////
     // mock-up the knowledge base 'Revise' service
     kb_revise_srv_ = tester_node_->create_service<kb_msgs::srv::Revise>(
-      "kb/revise", [&revision_reqs_ = revision_reqs_](
+      "/kb/revise", [&revision_reqs_ = revision_reqs_](
         const std::shared_ptr<kb_msgs::srv::Revise::Request> req,
         std::shared_ptr<kb_msgs::srv::Revise::Response> res) {
         std::cout << "emitted revise method: " << req->method << std::endl;
