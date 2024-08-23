@@ -2,8 +2,8 @@
 Changelog for package people_facts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.1 (2024-08-23)
+------------------
 * add basic diagnostics
 * clarify service name is absolute
 * Contributors: Luka Juricic, Séverin Lemaignan
