@@ -2,6 +2,12 @@
 Changelog for package people_facts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add basic diagnostics
+* clarify service name is absolute
+* Contributors: Luka Juricic, Séverin Lemaignan
+
 2.0.0 (2024-03-05)
 ------------------
 * port to ROS 2
