@@ -20,13 +20,15 @@
 #include <string>
 #include <vector>
 
+#include <diagnostic_msgs/msg/diagnostic_array.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_lifecycle/lifecycle_node.hpp>
+
 #include <hri/hri.hpp>
 #include <hri/person.hpp>
 #include <hri/types.hpp>
 #include <hri_msgs/msg/ids_match.hpp>
 #include <kb_msgs/srv/revise.hpp>
-#include <rclcpp/rclcpp.hpp>
-#include <rclcpp_lifecycle/lifecycle_node.hpp>
 
 namespace people_facts
 {
@@ -49,6 +51,8 @@ public:
   LifecycleCallbackReturn on_shutdown(const rclcpp_lifecycle::State &);
 
 private:
+  void publish_diagnostics();
+
   void internal_cleanup();
   void internal_deactivate();
 
@@ -65,6 +69,9 @@ private:
   rclcpp::Client<kb_msgs::srv::Revise>::SharedPtr kb_revise_;
 
   std::map<hri::ID, std::map<std::string, size_t>> previous_state_;
+
+  rclcpp::Publisher<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr diagnostics_pub_;
+  std::shared_ptr<rclcpp::TimerBase> diagnostics_timer_;
 };
 
 }  // namespace people_facts

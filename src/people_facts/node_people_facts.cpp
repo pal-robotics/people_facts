@@ -18,6 +18,9 @@
 #include <chrono>
 #include <functional>
 
+#include <diagnostic_msgs/msg/diagnostic_array.hpp>
+#include <diagnostic_msgs/msg/diagnostic_status.hpp>
+#include <diagnostic_updater/diagnostic_status_wrapper.hpp>
 #include <lifecycle_msgs/msg/state.hpp>
 
 using namespace std::chrono_literals;
@@ -47,6 +50,13 @@ NodePeopleFacts::~NodePeopleFacts()
 LifecycleCallbackReturn
 NodePeopleFacts::on_configure(const rclcpp_lifecycle::State &)
 {
+  diagnostics_pub_ =
+    this->create_publisher<diagnostic_msgs::msg::DiagnosticArray>(
+    "/diagnostics", 1);
+  diagnostics_timer_ = rclcpp::create_timer(
+    this, this->get_clock(), 1s,
+    std::bind(&NodePeopleFacts::publish_diagnostics, this));
+
   RCLCPP_INFO(this->get_logger(), "State: Inactive");
   return LifecycleCallbackReturn::SUCCESS;
 }
@@ -123,7 +133,11 @@ void NodePeopleFacts::internal_deactivate()
   kb_revise_.reset();
 }
 
-void NodePeopleFacts::internal_cleanup() {}
+void NodePeopleFacts::internal_cleanup()
+{
+  diagnostics_timer_.reset();
+  diagnostics_pub_.reset();
+}
 
 void NodePeopleFacts::update()
 {
@@ -250,6 +264,21 @@ bool NodePeopleFacts::needsUpdate(
   }
 
   return false;
+}
+
+void NodePeopleFacts::publish_diagnostics()
+{
+  diagnostic_updater::DiagnosticStatusWrapper status;
+  status.name = "/reasoning/kb/people_facts";
+  status.summary(
+    diagnostic_msgs::msg::DiagnosticStatus::OK,
+    "Publishing new detected humans to knowledge base");
+  status.add("Current lifecycle state", this->get_current_state().label());
+
+  diagnostic_msgs::msg::DiagnosticArray msg;
+  msg.header.stamp = this->get_clock()->now();
+  msg.status.push_back(status);
+  diagnostics_pub_->publish(msg);
 }
 
 }  // namespace people_facts
