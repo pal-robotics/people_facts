@@ -221,7 +221,7 @@ void NodePeopleFacts::onTrackedPerson(PersonPtr person)
 {
   auto revise = std::make_shared<kb_msgs::srv::Revise::Request>();
   revise->method = kb_msgs::srv::Revise::Request::UPDATE;
-  revise->statements = {person->id() + " currentlyTracked true"};
+  revise->statements = {"myself sees " + person->id()};
 
   kb_revise_->async_send_request(revise);
 }
@@ -230,7 +230,7 @@ void NodePeopleFacts::onTrackedPersonLost(const ID & id)
 {
   auto revise = std::make_shared<kb_msgs::srv::Revise::Request>();
   revise->method = kb_msgs::srv::Revise::Request::RETRACT;
-  revise->statements = {id + " currentlyTracked false"};
+  revise->statements = {"myself sees " + id};
 
   kb_revise_->async_send_request(revise);
 }
