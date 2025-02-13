@@ -2,6 +2,11 @@
 Changelog for package people_facts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* emit 'myself sees person_id' instead of 'person_id currentlyTracked true'
+* Contributors: Séverin Lemaignan
+
 2.0.1 (2024-08-23)
 ------------------
 * add basic diagnostics
