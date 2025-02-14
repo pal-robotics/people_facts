@@ -247,7 +247,7 @@ TEST_F(NodePeopleFactsTestDefault, OnePerson)
 
   std::vector<std::pair<std::string, std::vector<std::string>>> expected_result{
     {"update", {"person0 rdf:type Human"}},
-    {"update", {"person0 currentlyTracked true"}},
+    {"update", {"myself sees person0"}},
     {"retract",
       {"person0 hasEngagementLevel engaged",
         "person0 hasEngagementLevel engaging",
@@ -265,10 +265,10 @@ TEST_F(NodePeopleFactsTestDefault, TwoPersons)
   std::vector<std::pair<std::string, std::vector<std::string>>> expected_result{
     // person 1
     {"update", {"person0 rdf:type Human"}},
-    {"update", {"person0 currentlyTracked true"}},
+    {"update", {"myself sees person0"}},
     // person 2
     {"update", {"person1 rdf:type Human"}},
-    {"update", {"person1 currentlyTracked true"}},
+    {"update", {"myself sees person1"}},
     {"retract",
       {"person0 hasEngagementLevel engaged",
         "person0 hasEngagementLevel engaging",
@@ -289,7 +289,7 @@ TEST_F(NodePeopleFactsTestDefault, OnePersonEngaged)
 
   std::vector<std::pair<std::string, std::vector<std::string>>> expected_result{
     {"update", {"person0 rdf:type Human"}},
-    {"update", {"person0 currentlyTracked true"}},
+    {"update", {"myself sees person0"}},
     {"retract",
       {"person0 hasEngagementLevel engaged",
         "person0 hasEngagementLevel engaging",
