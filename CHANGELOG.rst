@@ -2,6 +2,11 @@
 Changelog for package people_facts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix test to match 5d35b1bc7f
+* Contributors: Séverin Lemaignan
+
 2.1.0 (2025-02-13)
 ------------------
 * emit 'myself sees person_id' instead of 'person_id currentlyTracked true'
