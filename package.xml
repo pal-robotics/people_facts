@@ -14,7 +14,11 @@
   <build_depend>pal_module_cmake</build_depend>
 
   <build_depend>diagnostic_updater</build_depend>
+
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>diagnostic_aggregator</exec_depend>
   <exec_depend>diagnostic_updater</exec_depend>
+
   <depend>diagnostic_msgs</depend>
 
   <depend>hri</depend>
