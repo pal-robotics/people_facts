@@ -2,6 +2,11 @@
 Changelog for package people_facts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add diagnostic analyzers
+* Contributors: Noel Jimenez
+
 2.1.1 (2025-02-14)
 ------------------
 * fix test to match 5d35b1bc7f
