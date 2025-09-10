@@ -57,4 +57,4 @@ if(BUILD_TESTING)
   target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME}_lib)
 endif()
 
-ament_auto_package(INSTALL_TO_SHARE config)
+ament_auto_package(INSTALL_TO_SHARE config USE_SCOPED_HEADER_INSTALL_DIR)
